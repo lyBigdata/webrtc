@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>What is my IP?</title>
+</head>
+<body>
+<h1 style="font-family: monospace; text-align: center; font-size: 10em;" id="ip">Finding IP ...</h1>
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script>
+    var RTCPeerConnection = window.RTCPeerConnection || webkitRTCPeerConnection;
+    var peerConn = new RTCPeerConnection({'iceServers': [{'urls': ['stun:193.112.245.151:3478']}]});
+    var dataChannel = peerConn.createDataChannel('test');  // Needs something added for some reason
+    peerConn.createOffer({}).then((desc) => peerConn.setLocalDescription(desc));
+    peerConn.onicecandidate = (e) => {
+        if (e.candidate == null) {
+            document.getElementById("ip").innerText = /c=IN IP4 ([^\n]*)\n/.exec(peerConn.localDescription.sdp)[1];
+        }
+    };
+</script>
+</body>
+</html>
